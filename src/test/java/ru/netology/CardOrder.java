@@ -48,4 +48,63 @@ public class CardOrder {
         String text = driver.findElement(By.cssSelector("[data-test-id=order-success]")).getText();
         assertEquals("Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.", text.trim());
     }
+
+    @Test
+    public void shouldCheckFieldName() {
+        driver.get("http://localhost:9999");
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Ордов 1111");
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79998887766");
+        driver.findElement(By.className("checkbox__box")).click();
+        driver.findElement(By.cssSelector("button")).click();
+        String actual = driver.findElement(By.className("input__sub")).getText().trim();
+        String expected = "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
+        assertEquals(expected, actual, "Текст сообщения не совпадает!");
+    }
+
+    @Test
+    public void shouldCheckEmptyFieldName() {
+        driver.get("http://localhost:9999");
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("");
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79998887766");
+        driver.findElement(By.cssSelector(".checkbox__box")).click();
+        driver.findElement(By.cssSelector("button")).click();
+        String actual = driver.findElement(By.className("input__sub")).getText().trim();
+        String expected = "Поле обязательно для заполнения";
+        assertEquals(expected, actual, "Текст сообщения не совпадает!");
+    }
+
+    @Test
+    public void shouldCheckFieldPhone() {
+        driver.get("http://localhost:9999");
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Орлов Олег");
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("879998887766");
+        driver.findElement(By.cssSelector(".checkbox__box")).click();
+        driver.findElement(By.cssSelector("button")).click();
+        String actual = driver.findElement(By.cssSelector(".input_invalid .input__sub")).getText().trim();
+        String expected = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
+        assertEquals(expected, actual, "Текст сообщения не совпадает!");
+    }
+
+    @Test
+    public void shouldCheckEmptyFieldPhone() {
+        driver.get("http://localhost:9999");
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Орлов Олег");
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("");
+        driver.findElement(By.className("checkbox__box")).click();
+        driver.findElement(By.cssSelector("button")).click();
+        String actual = driver.findElement(By.cssSelector(".input_invalid .input__sub")).getText().trim();
+        String expected = "Поле обязательно для заполнения";
+        assertEquals(expected, actual, "Текст сообщения не совпадает!");
+    }
+
+    @Test
+    public void shouldCheckCheckbox() {
+        driver.get("http://localhost:9999");
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Орлов Олег");
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79998887766");
+        driver.findElement(By.cssSelector("button")).click();
+        String actual = driver.findElement(By.cssSelector(".input_invalid")).getCssValue("color");
+        String expected = "rgba(255, 92, 92, 1)";
+        assertEquals(expected, actual, "Цвет не совпадает!");
+    }
 }
